@@ -51,11 +51,11 @@ void MODS_Poll(void)
 	uint16_t addr;
 	uint16_t crc1;
 	/* 超过3.5个字符时间后执行MODH_RxTimeOut()函数。全局变量 g_rtu_timeout = 1; 通知主程序开始解码 */
-	if (g_mods_timeout == 0)	
+	if (g_mods_timeout == 0)
 	{
 		return;								/* 没有超时，继续接收。不要清零 g_tModS.RxCount */
 	}
-	
+
 	g_mods_timeout = 0;	 					/* 清标志 */
 
 	if (g_tModS.RxCount < 4)				/* 接收到的数据小于4个字节就认为错误 */
@@ -78,14 +78,14 @@ void MODS_Poll(void)
 	}
 
 	/* 分析应用层协议 */
-	MODS_AnalyzeApp();						
-	
+	MODS_AnalyzeApp();
+
 err_ret:
 #if 1										/* 此部分为了串口打印结果,实际运用中可不要 */
 	g_tPrint.Rxlen = g_tModS.RxCount;
 	memcpy(g_tPrint.RxBuf, g_tModS.RxBuf, g_tModS.RxCount);
 #endif
-	
+
 	g_tModS.RxCount = 0;					/* 必须清零计数器，方便下次帧同步 */
 }
 
@@ -112,9 +112,9 @@ void MODS_ReciveNew(uint8_t _byte)
 	uint32_t timeout;
 
 	g_mods_timeout = 0;
-	
+
 	timeout = 35000000 / SBAUD485;			/* 计算超时时间，单位us 35000000*/
-	
+
 	/* 硬件定时中断，定时精度us 硬件定时器1用于ADC, 定时器2用于Modbus */
 	bsp_StartHardTimer(1, timeout, (void *)MODS_RxTimeOut);
 
@@ -157,7 +157,7 @@ static void MODS_SendWithCRC(uint8_t *_pBuf, uint8_t _ucLen)
 	buf[_ucLen++] = crc;
 
 	RS485_SendBuf(buf, _ucLen);
-	
+
 #if 1									/* 此部分为了串口打印结果,实际运用中可不要 */
 	g_tPrint.Txlen = _ucLen;
 	memcpy(g_tPrint.TxBuf, buf, _ucLen);
@@ -215,45 +215,45 @@ static void MODS_AnalyzeApp(void)
 {
 	switch (g_tModS.RxBuf[1])				/* 第2个字节 功能码 */
 	{
-		case 0x01:							/* 读取线圈状态（此例程用led代替）*/
-			MODS_01H();
-			bsp_PutMsg(MSG_MODS_01H, 0);	/* 发送消息,主程序处理 */
-			break;
+	case 0x01:							/* 读取线圈状态（此例程用led代替）*/
+		MODS_01H();
+		bsp_PutMsg(MSG_MODS_01H, 0);	/* 发送消息,主程序处理 */
+		break;
 
-		case 0x02:							/* 读取输入状态（按键状态）*/
-			MODS_02H();
-			bsp_PutMsg(MSG_MODS_02H, 0);
-			break;
-		
-		case 0x03:							/* 读取保持寄存器（此例程存在g_tVar中）*/
-			MODS_03H();
-			bsp_PutMsg(MSG_MODS_03H, 0);
-			break;
-		
-		case 0x04:							/* 读取输入寄存器（ADC的值）*/
-			MODS_04H();
-			bsp_PutMsg(MSG_MODS_04H, 0);
-			break;
-		
-		case 0x05:							/* 强制单线圈（设置led）*/
-			MODS_05H();
-			bsp_PutMsg(MSG_MODS_05H, 0);
-			break;
-		
-		case 0x06:							/* 写单个保存寄存器（此例程改写g_tVar中的参数）*/
-			MODS_06H();	
-			bsp_PutMsg(MSG_MODS_06H, 0);
-			break;
-			
-		case 0x10:							/* 写多个保存寄存器（此例程存在g_tVar中的参数）*/
-			MODS_10H();
-			bsp_PutMsg(MSG_MODS_10H, 0);
-			break;
-		
-		default:
-			g_tModS.RspCode = RSP_ERR_CMD;
-			MODS_SendAckErr(g_tModS.RspCode);	/* 告诉主机命令错误 */
-			break;
+	case 0x02:							/* 读取输入状态（按键状态）*/
+		MODS_02H();
+		bsp_PutMsg(MSG_MODS_02H, 0);
+		break;
+
+	case 0x03:							/* 读取保持寄存器（此例程存在g_tVar中）*/
+		MODS_03H();
+		bsp_PutMsg(MSG_MODS_03H, 0);
+		break;
+
+	case 0x04:							/* 读取输入寄存器（ADC的值）*/
+		MODS_04H();
+		bsp_PutMsg(MSG_MODS_04H, 0);
+		break;
+
+	case 0x05:							/* 强制单线圈（设置led）*/
+		MODS_05H();
+		bsp_PutMsg(MSG_MODS_05H, 0);
+		break;
+
+	case 0x06:							/* 写单个保存寄存器（此例程改写g_tVar中的参数）*/
+		MODS_06H();
+		bsp_PutMsg(MSG_MODS_06H, 0);
+		break;
+
+	case 0x10:							/* 写多个保存寄存器（此例程存在g_tVar中的参数）*/
+		MODS_10H();
+		bsp_PutMsg(MSG_MODS_10H, 0);
+		break;
+
+	default:
+		g_tModS.RspCode = RSP_ERR_CMD;
+		MODS_SendAckErr(g_tModS.RspCode);	/* 告诉主机命令错误 */
+		break;
 	}
 }
 
@@ -301,7 +301,7 @@ static void MODS_01H(void)
 	uint16_t i;
 	uint16_t m;
 	uint8_t status[10];
-	
+
 	g_tModS.RspCode = RSP_OK;
 
 	/* 没有外部继电器，直接应答错误 */
@@ -315,7 +315,7 @@ static void MODS_01H(void)
 	num = BEBufToUint16(&g_tModS.RxBuf[4]);				/* 寄存器个数 */
 
 	m = (num + 7) / 8;
-	
+
 	if ((reg >= REG_D01) && (num > 0) && (reg + num <= REG_DXX + 1))
 	{
 		for (i = 0; i < m; i++)
@@ -325,7 +325,7 @@ static void MODS_01H(void)
 		for (i = 0; i < num; i++)
 		{
 			if (bsp_IsLedOn(i + 1 + reg - REG_D01))		/* 读LED的状态，写入状态寄存器的每一位 */
-			{  
+			{
 				status[i / 8] |= (1 << (i % 8));
 			}
 		}
@@ -376,9 +376,9 @@ static void MODS_02H(void)
 			A9 CRC校验低字节
 
 		从机应答:  响应各离散输入寄存器状态，分别对应数据区中的每位值，1 代表ON；0 代表OFF。
-		           第一个数据字节的LSB(最低字节)为查询的寻址地址，其他输入口按顺序在该字节中由低字节
-		           向高字节排列，直到填充满8位。下一个字节中的8个输入位也是从低字节到高字节排列。
-		           若返回的输入位数不是8的倍数，则在最后的数据字节中的剩余位至该字节的最高位使用0填充。
+				   第一个数据字节的LSB(最低字节)为查询的寻址地址，其他输入口按顺序在该字节中由低字节
+				   向高字节排列，直到填充满8位。下一个字节中的8个输入位也是从低字节到高字节排列。
+				   若返回的输入位数不是8的倍数，则在最后的数据字节中的剩余位至该字节的最高位使用0填充。
 			11 从机地址
 			02 功能码
 			03 返回字节数
@@ -462,19 +462,19 @@ static void MODS_02H(void)
 static uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 {
 	uint16_t value;
-	
+
 	switch (reg_addr)									/* 判断寄存器地址 */
 	{
-		case SLAVE_REG_P01:
-			value =	g_tVar.P01;	
-			break;
+	case SLAVE_REG_P01:
+		value = g_tVar.P01;
+		break;
 
-		case SLAVE_REG_P02:
-			value =	g_tVar.P02;							/* 将寄存器值读出 */
-			break;
-	
-		default:
-			return 0;									/* 参数异常，返回 0 */
+	case SLAVE_REG_P02:
+		value = g_tVar.P02;							/* 将寄存器值读出 */
+		break;
+
+	default:
+		return 0;									/* 参数异常，返回 0 */
 	}
 
 	reg_value[0] = value >> 8;
@@ -495,17 +495,17 @@ static uint8_t MODS_ReadRegValue(uint16_t reg_addr, uint8_t *reg_value)
 static uint8_t MODS_WriteRegValue(uint16_t reg_addr, uint16_t reg_value)
 {
 	switch (reg_addr)							/* 判断寄存器地址 */
-	{	
-		case SLAVE_REG_P01:
-			g_tVar.P01 = reg_value;				/* 将值写入保存寄存器 */
-			break;
-		
-		case SLAVE_REG_P02:
-			g_tVar.P02 = reg_value;				/* 将值写入保存寄存器 */
-			break;
-		
-		default:
-			return 0;		/* 参数异常，返回 0 */
+	{
+	case SLAVE_REG_P01:
+		g_tVar.P01 = reg_value;				/* 将值写入保存寄存器 */
+		break;
+
+	case SLAVE_REG_P02:
+		g_tVar.P02 = reg_value;				/* 将值写入保存寄存器 */
+		break;
+
+	default:
+		return 0;		/* 参数异常，返回 0 */
 	}
 
 	return 1;		/* 读取成功 */
@@ -602,8 +602,8 @@ err_ret:
 
 		for (i = 0; i < num; i++)
 		{
-			g_tModS.TxBuf[g_tModS.TxCount++] = reg_value[2*i];
-			g_tModS.TxBuf[g_tModS.TxCount++] = reg_value[2*i+1];
+			g_tModS.TxBuf[g_tModS.TxCount++] = reg_value[2 * i];
+			g_tModS.TxBuf[g_tModS.TxCount++] = reg_value[2 * i + 1];
 		}
 		MODS_SendWithCRC(g_tModS.TxBuf, g_tModS.TxCount);	/* 发送正确应答 */
 	}
@@ -669,21 +669,21 @@ static void MODS_04H(void)
 
 	reg = BEBufToUint16(&g_tModS.RxBuf[2]); 	/* 寄存器号 */
 	num = BEBufToUint16(&g_tModS.RxBuf[4]);	/* 寄存器个数 */
-	
+
 	if ((reg >= REG_A01) && (num > 0) && (reg + num <= REG_AXX + 1))
-	{	
+	{
 		for (i = 0; i < num; i++)
 		{
 			switch (reg)
 			{
 				/* 测试参数 */
-				case REG_A01:
-					status[i] = g_tVar.A01;
-					break;
-					
-				default:
-					status[i] = 0;
-					break;
+			case REG_A01:
+				status[i] = g_tVar.A01;
+				break;
+
+			default:
+				status[i] = 0;
+				break;
 			}
 			reg++;
 		}
@@ -760,7 +760,7 @@ static void MODS_05H(void)
 	uint16_t value;
 
 	g_tModS.RspCode = RSP_OK;
-	
+
 	if (g_tModS.RxCount != 8)
 	{
 		g_tModS.RspCode = RSP_ERR_VALUE;		/* 数据值域错误 */
@@ -769,13 +769,13 @@ static void MODS_05H(void)
 
 	reg = BEBufToUint16(&g_tModS.RxBuf[2]); 	/* 寄存器号 */
 	value = BEBufToUint16(&g_tModS.RxBuf[4]);	/* 数据 */
-	
+
 	if (value != 0 && value != 1)
 	{
 		g_tModS.RspCode = RSP_ERR_VALUE;		/* 数据值域错误 */
 		goto err_ret;
 	}
-	
+
 	if (reg == REG_D01)
 	{
 		g_tVar.D01 = value;
@@ -942,7 +942,7 @@ static void MODS_10H(void)
 	uint8_t byte_num;
 	uint8_t i;
 	uint16_t value;
-	
+
 	g_tModS.RspCode = RSP_OK;
 
 	if (g_tModS.RxCount < 11)
@@ -959,7 +959,7 @@ static void MODS_10H(void)
 	{
 		;
 	}
-	
+
 	for (i = 0; i < reg_num; i++)
 	{
 		value = BEBufToUint16(&g_tModS.RxBuf[7 + 2 * i]);	/* 寄存器值 */
