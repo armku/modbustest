@@ -215,5 +215,3 @@ uint8_t bsp_IsLedOn(uint8_t _no)
 
 	return 0;
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

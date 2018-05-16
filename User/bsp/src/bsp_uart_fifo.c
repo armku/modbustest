@@ -1127,5 +1127,3 @@ int fgetc(FILE *f)
 	return (int)USART_ReceiveData(USART1);
 #endif
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

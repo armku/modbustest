@@ -220,6 +220,3 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	}
 	#endif
 }
-
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

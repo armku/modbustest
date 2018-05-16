@@ -493,5 +493,3 @@ void bsp_KeyScan(void)
 		bsp_DetectKey(i);
 	}
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

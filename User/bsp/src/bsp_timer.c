@@ -661,5 +661,3 @@ void TIM5_IRQHandler(void)
         s_TIM_CallBack4();
     }
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

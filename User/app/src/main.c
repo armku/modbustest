@@ -165,5 +165,3 @@ static void DispMenu(void)
 
 	g_tVar.A01 = AdcValue;					/* 得到输入模拟量 */
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

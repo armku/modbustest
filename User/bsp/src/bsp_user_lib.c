@@ -517,5 +517,3 @@ uint32_t AsciiToUint32(char *pAscii)
 	}
 	return lResult;
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

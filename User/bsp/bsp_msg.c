@@ -127,5 +127,3 @@ void bsp_ClearMsg(void)
 {
 	g_tMsg.Read = g_tMsg.Write;
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

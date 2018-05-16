@@ -100,5 +100,3 @@ void bsp_Idle(void)
 
 	MODS_Poll();
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

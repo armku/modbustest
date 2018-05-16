@@ -985,5 +985,3 @@ err_ret:
 		MODS_SendAckErr(g_tModS.RspCode);			/* 告诉主机命令错误 */
 	}
 }
-
-/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
